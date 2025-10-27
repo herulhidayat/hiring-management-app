@@ -13,7 +13,7 @@ const nextConfig: NextConfig = {
     ignoreBuildErrors: true,
   },
   images: {
-    remotePatterns: [new URL('https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/**')],
+    remotePatterns: [new URL('https://flagsapi.com/**')],
   },
   distDir: 'build',
 };

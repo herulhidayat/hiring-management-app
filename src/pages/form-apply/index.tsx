@@ -1,12 +1,45 @@
-import CameraCapture from "@/components/Form/CameraCapure";
-import { Container } from "@mui/material";
+import ButtonCustom from "@/components/Button/ButtonCustom";
+import FormApplyFeature from "@/components/Fetaures/FormApplyFeature";
+import ArrowLeftIcon from "@/components/Icons/ArrowLeftIcon";
+import { Container, Modal, Typography } from "@mui/material";
+import { useRouter } from "next/router";
 
 export default function FormApply() {
-    return (
-        <Container sx={{mt:5}}>
-            <div className="border border-neutral-40 p-10 bg-neutral-10">
-                <CameraCapture />
+  const router = useRouter();
+  return (
+    <>
+      <Container sx={{mt:5}}>
+        <div className="border border-neutral-40 p-10 bg-neutral-10 lg:mx-40">
+          <div className="flex flex-col gap-6">
+            <div className="flex justify-between items-center">
+              <div className="flex gap-4 items-center">
+                <ButtonCustom 
+                  color="var(--color-neutral-90)"
+                  bgColor="var(--color-neutral-10)"
+                  bgColorHover="var(--color-neutral-30)" 
+                  optionsConfig={{
+                    onClick: () => {
+                      router.push('/');
+                    }
+                  }}
+                  styleConfig={{
+                    border: '1px solid var(--color-neutral-40)',
+                    p: 1,
+                    minWidth: 'auto',
+                  }}
+                >
+                  <ArrowLeftIcon />
+                </ButtonCustom>
+                <h3 className="text-lg/relaxed font-bold text-neutral-100">
+                  Apply Front End at Rakamin
+                </h3>
+              </div>
+              <p className="text-sm/relaxed text-neutral-70">ℹ️ This field required to fill</p>
             </div>
-        </Container>
-    )
+            <FormApplyFeature />
+          </div>
+        </div>
+      </Container>
+    </>
+  )
 }
