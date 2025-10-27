@@ -6,28 +6,40 @@ import * as tf from '@tensorflow/tfjs';
 import * as handpose from '@tensorflow-models/handpose';
 import * as fp from 'fingerpose';
 import ButtonCustom from '../Button/ButtonCustom';
+import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
+import { OneGesture, ThreeIndexMiddleRing, TwoGesture } from '../Helper/finger-gesture.helper';
 
 const videoConstraints: MediaTrackConstraints = {
   facingMode: { ideal: 'environment' }, // Prefer the rear camera on mobile
 };
 
 const TARGET_GESTURE = 'victory';
-const COUNTDOWN_DURATION = 5;
+const COUNTDOWN_DURATION = 3;
 
-const CameraCapture: React.FC = () => {
+interface Props {
+  callbackData?: (value: any) => void
+}
+
+const CameraCapture: React.FC<Props> = ({callbackData}: Props) => {
   const webcamRef = useRef<Webcam | null>(null);
   // const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const detectionModelRef = useRef<handpose.HandPose | null>(null);
   const rafRef = useRef<number>(0);
   const countdownTimerRef = useRef<ReturnType<typeof setTimeout>>(null);
   const gestureEstimatorRef = useRef(
-    new fp.GestureEstimator([fp.Gestures.VictoryGesture])
+    new fp.GestureEstimator([
+      OneGesture,
+      TwoGesture,
+      ThreeIndexMiddleRing
+    ])
   );
 
   const [imgSrc, setImgSrc] = useState<string | null>(null);
   const [captureDimensions, setCaptureDimensions] = useState({ width: 640, height: 480 });
   const [gesture, setGesture] = useState<string | null>(null);
   const [countdown, setCountdown] = useState<number>(0);
+  const [captureState, setCaptureState] = useState(0);
+  const [isModelReady, setIsModelReady] = useState(false);
 
   // const drawOverlay = useCallback(() => {
   //   const canvas = canvasRef.current;
@@ -93,6 +105,7 @@ const CameraCapture: React.FC = () => {
 
     const loadHandpose = async () => {
       try {
+        setIsModelReady(false);
         await tf.setBackend('webgl');
         await tf.ready();
         if (!isMounted) return;
@@ -100,9 +113,13 @@ const CameraCapture: React.FC = () => {
         detectionModelRef.current = await handpose.load();
         if (!isMounted) return;
 
+        setIsModelReady(true);
         detect();
       } catch (error) {
         console.error('Failed to initialize handpose model', error);
+        if (isMounted) {
+          setIsModelReady(false);
+        }
       }
     };
 
@@ -138,11 +155,18 @@ const CameraCapture: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    if (gesture !== TARGET_GESTURE || countdown > 0 || imgSrc) {
-      return;
+    // if (gesture !== TARGET_GESTURE || countdown > 0 || imgSrc) {
+    //   return;
+    // }
+    if (gesture === 'three') {
+      setCaptureState(1);
+    } else if (gesture === 'two' && captureState === 1) {
+      setCaptureState(2);
+    } else if (gesture === 'one' && captureState === 2) {
+      setCaptureState(3);
+      setCountdown(COUNTDOWN_DURATION);
     }
 
-    setCountdown(COUNTDOWN_DURATION);
   }, [gesture, countdown, imgSrc]);
 
   useEffect(() => {
@@ -167,27 +191,6 @@ const CameraCapture: React.FC = () => {
     };
   }, [countdown, capturePhoto]);
 
-  const uploadPhoto = async () => {
-    if (!imgSrc) return;
-
-    try {
-      const response = await fetch(imgSrc);
-      const blob = await response.blob();
-      const formData = new FormData();
-      formData.append('file', blob, 'photo.jpg');
-
-      const uploadResponse = await axios.post('https://your-api-endpoint.com/upload', formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      });
-
-      console.log('Upload response: ', uploadResponse.data);
-    } catch (err) {
-      console.error('Error uploading photo: ', err);
-    }
-  };
-
   const renderCountdown = useMemo(() => {
     return (
       <div className="w-full h-full flex justify-center items-center gap-2 bg-[rgba(0,0,0,0.5)]">
@@ -200,7 +203,7 @@ const CameraCapture: React.FC = () => {
   }, [countdown]);
 
   return (
-    <div className="camera-capture" style={{ position: 'relative' }}>
+    <div>
       {imgSrc ? (
         <>
           <div className="flex flex-col gap-4">
@@ -214,7 +217,10 @@ const CameraCapture: React.FC = () => {
             <div className="flex gap-2 justify-center text-sm font-bold">
               <ButtonCustom
                 optionsConfig={{
-                  onClick:() => setImgSrc(null)
+                  onClick:() => {
+                    setImgSrc(null)
+                    setCaptureState(0)
+                  }
                 }}
                 styleConfig={{
                   backgroundColor: 'var(--color-white)',
@@ -228,36 +234,88 @@ const CameraCapture: React.FC = () => {
               >Retake Photo</ButtonCustom>
               <ButtonCustom
                 optionsConfig={{
-                  onClick:() => uploadPhoto()
+                  onClick:() => {
+                    if(callbackData) callbackData(imgSrc)
+                  }
                 }}
               >Submit</ButtonCustom>
             </div>
           </div>
         </>
       ): (
-        <div className="camera">
-          <Webcam
-            audio={false}
-            ref={webcamRef}
-            screenshotFormat="image/jpeg"
-            videoConstraints={videoConstraints}
-            style={{ width: '100%', height: 'auto' }}
-          />
-          {countdown > 0 && (
-            <div
-              style={{
-                position: 'absolute',
-                top: 0,
-                left: 0,
-                zIndex: 1,
-                width: '100%',
-                height: '100%',
-                pointerEvents: 'none',
-              }}
-            >
-              {renderCountdown}
+        <div className='flex flex-col gap-4'>
+          <div className='relative'>
+            <Webcam
+              audio={false}
+              ref={webcamRef}
+              screenshotFormat="image/jpeg"
+              videoConstraints={videoConstraints}
+              style={{ width: '100%', height: 'auto' }}
+            />
+            {countdown > 0 && (
+              <div
+                style={{
+                  position: 'absolute',
+                  top: 0,
+                  left: 0,
+                  zIndex: 1,
+                  width: '100%',
+                  height: '100%',
+                  pointerEvents: 'none',
+                }}
+              >
+                {renderCountdown}
+              </div>
+            )}
+            {(!isModelReady) && (
+              <div
+                style={{
+                  position: 'absolute',
+                  top: 0,
+                  left: 0,
+                  zIndex: 1,
+                  width: '100%',
+                  height: '100%',
+                  pointerEvents: 'none',
+                }}
+              >
+                <div className="w-full h-full flex justify-center items-center gap-2 bg-[rgba(0,0,0,0.5)]">
+                  <p className='text-xl text-white font-bold'>Initializing model...</p>
+                </div>
+              </div>
+            )}
+          </div>
+          <div className='flex flex-col justify-center items-center gap-4'>
+            <p className='text-sm'>To take a picture, follow the hand poses in the order shown below. The system will automatically capture the image once the final pose is detected.</p>
+            <div className='flex gap-2 text-3xl justify-center items-center'>
+              <div className={captureState === 1 ? 'border-2 border-primary' : ''}>
+                <Image 
+                  src={"/assets/hand-3.png"} 
+                  alt="hand-3" 
+                  width={57} 
+                  height={57} 
+                />
+              </div>
+              <ArrowForwardIosIcon />
+              <div className={captureState === 2 ? 'border-2 border-primary' : ''}>
+                <Image 
+                  src={"/assets/hand-2.png"} 
+                  alt="hand-2" 
+                  width={57} 
+                  height={57} 
+                />
+              </div>
+              <ArrowForwardIosIcon />
+              <div className={captureState === 3 ? 'border-2 border-primary' : ''}>
+                <Image 
+                  src={"/assets/hand-1.png"} 
+                  alt="hand-2" 
+                  width={57} 
+                  height={57} 
+                />
+              </div>
             </div>
-          )}
+          </div>
         </div>
       )}
     </div>
