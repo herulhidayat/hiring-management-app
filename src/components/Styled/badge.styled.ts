@@ -96,7 +96,7 @@ export const BadgeCustomOutline = styled.div<{ bgColor?: string, color?: string 
     padding: 0.125rem 0.5rem;
     background-color: ${({ bgColor }) => bgColor};
     color: ${({ color }) => color};
-    border: 1px solid ${({ color }) => color} 1px solid;
+    border: 1px solid ${({ color }) => color};
     border-radius: 0.25rem;
 
     font-size: 0.875rem;

@@ -12,6 +12,7 @@ export default function JobListManagementFeature() {
             <div className="flex flex-col gap-3 p-6 cursor-pointer rounded-2xl shadow-[0px_4px_8px_rgba(0,0,0,0.1)]">
               <div className="flex gap-2 items-start">
                 <BadgeDefaultOutline color={ item.status === "active" ? "success" : item.status === "inactive" ? "danger" : "warning"} className="capitalize">{item.status}</BadgeDefaultOutline>
+                <BadgeCustomOutline color={"var(--color-neutral-70)"} className="capitalize">{item.list_card.started_on_text}</BadgeCustomOutline>
               </div>
               <div className="flex flex-col gap-2">
                 <p className="text-lg font-bold">
