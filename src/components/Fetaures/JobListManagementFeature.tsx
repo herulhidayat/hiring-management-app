@@ -28,43 +28,43 @@ export default function JobListManagementFeature() {
               <div className="flex justify-between items-center">
                 <div className="flex gap-4">
                   <div className="flex flex-col gap-1">
-                    <div className='text-xs/normal flex gap-1 items-center text-neutral-70'>
+                    <div className='text-xs/normal flex gap-1 items-center text-neutral-70 w-[5rem]'>
                       <AccessTime sx={{ fontSize: '1rem' }} />
                       Applied
                     </div>
-                    <p className='text-xs/normal font-bold text-primary'>0</p>
+                    <p className='text-xs/normal font-bold text-primary ps-[1px]'>0</p>
                   </div>
                   <div className="border-s border-neutral-40"></div>
                   <div className="flex flex-col gap-1">
-                    <div className='text-xs/normal flex gap-1 items-center text-neutral-70'>
+                    <div className='text-xs/normal flex gap-1 items-center text-neutral-70 w-[5rem]'>
                       <AssignmentOutlined sx={{ fontSize: '1rem' }} />
                       Test
                     </div>
-                    <p className='text-xs/normal font-bold text-primary'>0</p>
+                    <p className='text-xs/normal font-bold text-primary ps-[1px]'>0</p>
                   </div>
                   <div className="border-s border-neutral-40"></div>
                   <div className="flex flex-col gap-1">
-                    <div className='text-xs/normal flex gap-1 items-center text-neutral-70'>
+                    <div className='text-xs/normal flex gap-1 items-center text-neutral-70 w-[5rem]'>
                       <VideoCameraFrontOutlined sx={{ fontSize: '1rem' }} />
                       Interview
                     </div>
-                    <p className='text-xs/normal font-bold text-primary'>0</p>
+                    <p className='text-xs/normal font-bold text-primary ps-[1px]'>0</p>
                   </div>
                   <div className="border-s border-neutral-40"></div>
                   <div className="flex flex-col gap-1">
-                    <div className='text-xs/normal flex gap-1 items-center text-neutral-70'>
+                    <div className='text-xs/normal flex gap-1 items-center text-neutral-70 w-[5rem]'>
                       <DescriptionOutlined sx={{ fontSize: '1rem' }} />
                       Offering
                     </div>
-                    <p className='text-xs/normal font-bold text-primary'>0</p>
+                    <p className='text-xs/normal font-bold text-primary ps-[1px]'>0</p>
                   </div>
                   <div className="border-s border-neutral-40"></div>
                   <div className="flex flex-col gap-1">
-                    <div className='text-xs/normal flex gap-1 items-center text-neutral-70'>
+                    <div className='text-xs/normal flex gap-1 items-center text-neutral-70 w-[5rem]'>
                       <WorkOutline sx={{ fontSize: '1rem' }} />
                       Hired
                     </div>
-                    <p className='text-xs/normal font-bold text-primary'>0</p>
+                    <p className='text-xs/normal font-bold text-primary ps-[1px]'>0</p>
                   </div>
                 </div>
                 <ButtonCustom>
