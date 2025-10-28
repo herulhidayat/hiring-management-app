@@ -1,10 +1,15 @@
 import ButtonCustom from "@/components/Button/ButtonCustom";
+import FormAddJobFeature from "@/components/Fetaures/FormAddJobFeature";
 import JobListManagementFeature from "@/components/Fetaures/JobListManagementFeature";
 import JobStatisticFeature from "@/components/Fetaures/JobStatisticFeature";
-import { Container, Grid } from "@mui/material";
+import { CardDefault } from "@/components/Styled/card.styled";
+import { Close } from "@mui/icons-material";
+import { Container, Grid, Modal } from "@mui/material";
+import { useState } from "react";
 import styled from "styled-components";
 
 export default function JobsPage() {
+  const [modalAddJob, setModalAddJob] = useState<boolean>(false);
   return (
     <>
       <Container sx={{ mt: 5 }}>
@@ -24,7 +29,7 @@ export default function JobsPage() {
                     Create jobs, invite, and hire with ease
                   </p>
                 </div>
-                <ButtonCustom>
+                <ButtonCustom optionsConfig={{ onClick: () => setModalAddJob(true) }}>
                   Create New Job
                 </ButtonCustom>
               </CardCreateJob>
@@ -33,6 +38,36 @@ export default function JobsPage() {
           </Grid>
         </Grid>
       </Container>
+
+      <Modal
+        open={modalAddJob}
+        onClose={() => setModalAddJob(false)}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
+      >
+        <CardDefault className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-neutral-10 w-3/4 md:w-1/2">
+          <div className="flex flex-col gap-0">
+            <div className="flex justify-between p-6 border-b border-neutral-40">
+              <div className="flex flex-col gap-0">
+                <h4 className="text-xl font-bold text-neutral-100">Job Opening</h4>
+              </div>
+              <div className="cursor-pointer" onClick={() => setModalAddJob(false)}>
+                <Close />
+              </div>
+            </div>
+            <div className="p-6 pe-4 overflow-y-auto max-h-[calc(100vh-12.5rem)] me-1">
+              <FormAddJobFeature />
+            </div>
+            <div className="flex justify-end p-6 border-t border-neutral-40">
+              <ButtonCustom optionsConfig={{
+                type: 'submit',
+              }}>
+                Publish Job
+              </ButtonCustom>
+            </div>
+          </div>
+        </CardDefault>
+      </Modal>
     </>
   )
 }
