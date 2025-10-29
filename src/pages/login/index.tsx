@@ -135,11 +135,11 @@ function LoginPage() {
                         type={showPassword ? "text" : "password"}
                         placeholder="Masukkan Password"
                       />
-                      <div className="absolute top-1/2 right-4 -translate-y-1/2">
+                      <div className="absolute top-1/2 right-4 -translate-y-1/2 text-neutral-70 cursor-pointer">
                         {showPassword ? (
-                          <Visibility onClick={() => setShowPassword(false)} />
+                          <Visibility sx={{ fontSize: '1.25rem'}} onClick={() => setShowPassword(false)} />
                         ) : (
-                          <VisibilityOff onClick={() => setShowPassword(true)} />
+                          <VisibilityOff sx={{ fontSize: '1.25rem'}} onClick={() => setShowPassword(true)} />
                         )}
                       </div>
                     </div>
