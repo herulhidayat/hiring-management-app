@@ -11,15 +11,17 @@ import Button from "@mui/material/Button";
 import MenuItem from "@mui/material/MenuItem";
 import Image from "next/image";
 import { useRouter } from "next/router";
-import { useTranslation } from "react-i18next";
 import PopupState, { bindTrigger, bindPopover } from 'material-ui-popup-state';
 import { Popover } from "@mui/material";
 import CorporateFareIcon from '@mui/icons-material/CorporateFare';
 import { getItem } from "../Helper/localstorage.helper";
 import ButtonCustom from "../Button/ButtonCustom";
 
-function Header() {
-  const  { t } = useTranslation();
+interface Props {
+  title?: string;
+}
+
+function Header({ title }: Props) {
   const router = useRouter();
   const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(
     null
@@ -41,7 +43,7 @@ function Header() {
   };
 
   return (
-    <AppBar position="static" color="transparent" style={{ boxShadow: "0px 4px 8px 0px rgba(0, 0, 0, 0.1)" }}>
+    <AppBar position="static" color="transparent" style={{ boxShadow: "0px 4px 8px 0px rgba(0, 0, 0, 0.1)" }} className="font-sans">
       <div className="backdrop-blur-md">
         <Container className="h-[3.25rem] flex items-center">
           <Toolbar disableGutters className="flex gap-4 md:justify-between w-full">
@@ -85,7 +87,7 @@ function Header() {
                 <Image src="/assets/logo.png" alt="logo" height={50} width={145} />
               </div>
               <div className="border-l border-neutral-40 pl-4 font-medium text-gray-600">
-                  Job List
+                  {title}
               </div>
             </div>
             <div className="flex items-center gap-4">

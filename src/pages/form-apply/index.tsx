@@ -13,7 +13,7 @@ export default function FormApply() {
   return (
     <>
       <section className="sticky top-0 z-50">
-        <Header />
+        <Header title="Form Apply" />
       </section>
 
       {isSuccess ? (
@@ -23,7 +23,7 @@ export default function FormApply() {
           </div>
         </Container>
       ): (
-        <Container sx={{mt:5, mb:5}}>
+        <Container sx={{mt:5, mb:5}} className="font-sans">
           <div className="border border-neutral-40 p-10 bg-neutral-10 lg:mx-40">
             <div className="flex flex-col gap-6">
               <div className="flex justify-between items-center">

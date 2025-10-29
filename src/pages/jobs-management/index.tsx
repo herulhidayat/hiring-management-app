@@ -14,10 +14,10 @@ export default function JobsPage() {
   return (
     <>
       <section className="sticky top-0 z-50">
-        <Header />
+        <Header title="Jobs Management" />
       </section>
 
-      <Container sx={{ mt: 5 }}>
+      <Container sx={{ mt: 5 }} className="font-sans">
         <Grid container spacing={2}>
           <Grid size={9}>
             <JobListManagementFeature />

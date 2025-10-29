@@ -4,8 +4,10 @@ import { BadgeCustomOutline, BadgeDefaultOutline } from "../Styled/badge.styled"
 import { QueryClient, QueryClientProvider, useQuery } from "@tanstack/react-query";
 import api from "@/services/api.service";
 import { API_PATH } from "@/services/_path.service";
+import { useRouter } from "next/router";
 
 function JobListManagement() {
+  const router = useRouter();
 
   const dataLists = useQuery({
     queryKey: ["datasets", "detail"],
@@ -81,7 +83,7 @@ function JobListManagement() {
                     <p className='text-xs/normal font-bold text-primary ps-[1px]'>0</p>
                   </div>
                 </div>
-                <ButtonCustom>
+                <ButtonCustom optionsConfig={{ onClick: () => {router.push({ pathname: `/jobs-management/${item.id}`, query: {title: item.title} })} }}>
                   {item.list_card.cta}
                 </ButtonCustom>
               </div>

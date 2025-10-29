@@ -15,9 +15,9 @@ import Header from "@/components/Navbar/Header";
   return (
     <>
       <section className="sticky top-0 z-50">
-        <Header />
+        <Header title="Jobs List" />
       </section>
-      <Container sx={{mt:5}}>
+      <Container sx={{mt:5}} className="font-sans">
         <Grid container spacing={2}>
           <Grid size={4}>
             <JobListFeature callbackSelected={setSelected} />
