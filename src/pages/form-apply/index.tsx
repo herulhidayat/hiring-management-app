@@ -1,6 +1,6 @@
 import ButtonCustom from "@/components/Button/ButtonCustom";
 import FormApplyFeature from "@/components/Fetaures/FormApplyFeature";
-import SuccessMessage from "@/components/Fetaures/SuccessMessage";
+import SuccessMessage from "@/components/Message/SuccessMessage";
 import ArrowLeftIcon from "@/components/Icons/ArrowLeftIcon";
 import Header from "@/components/Navbar/Header";
 import { Container, Modal, Typography } from "@mui/material";

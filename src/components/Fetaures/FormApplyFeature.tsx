@@ -21,7 +21,6 @@ import { QueryClient, QueryClientProvider, useMutation, useQuery } from "@tansta
 import api from "@/services/api.service";
 import { API_PATH } from "@/services/_path.service";
 import { useRouter } from "next/router";
-import SuccessMessage from "./SuccessMessage";
 
 interface Props {
   callbackSuccess: (value: any) => void
