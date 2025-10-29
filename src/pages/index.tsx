@@ -8,11 +8,15 @@ import {
   QueryClient,
   QueryClientProvider,
 } from "@tanstack/react-query";
+import Header from "@/components/Navbar/Header";
 
  function HomePage() {
   const [selected, setSelected] = useState<any>({});
   return (
     <>
+      <section className="sticky top-0 z-50">
+        <Header />
+      </section>
       <Container sx={{mt:5}}>
         <Grid container spacing={2}>
           <Grid size={4}>

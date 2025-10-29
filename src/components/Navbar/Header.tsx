@@ -15,6 +15,8 @@ import { useTranslation } from "react-i18next";
 import PopupState, { bindTrigger, bindPopover } from 'material-ui-popup-state';
 import { Popover } from "@mui/material";
 import CorporateFareIcon from '@mui/icons-material/CorporateFare';
+import { getItem } from "../Helper/localstorage.helper";
+import ButtonCustom from "../Button/ButtonCustom";
 
 function Header() {
   const  { t } = useTranslation();
@@ -22,6 +24,8 @@ function Header() {
   const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(
     null
   );
+  
+  const user = getItem('user')
 
   const handleOpenNavMenu = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorElNav(event.currentTarget);
@@ -85,94 +89,125 @@ function Header() {
               </div>
             </div>
             <div className="flex items-center gap-4">
-              <PopupState variant="popover" popupId="demo-popup-popover">
-                {(popupState) => (
-                  <div>
-                    <div {...bindTrigger(popupState)} className="flex gap-1 items-center text-gray-600 cursor-pointer">
-                      <CorporateFareIcon />
-                      <p className="text-sm">For Corporate</p>
-                    </div>
-                    <Popover
-                      {...bindPopover(popupState)}
-                      anchorOrigin={{
-                        vertical: 'bottom',
-                        horizontal: 'left',
-                      }}
-                      sx={{
-                        mt: 1,
-                        '& .MuiPopover-paper': {
-                          width: '100%',
-                          maxWidth: 200,
-                          overflow: 'visible',
-                          boxShadow: '0px 4px 8px 0px rgba(0,0,0,0.1)',
-                        },
-                      }}
-                    >
-                      <Button
-                        sx={{
-                          p: 2,
-                          width: '100%',
-                          textAlign: 'left',
-                          color: 'var(--color-neutral-800)',
-                          justifyContent: 'flex-start',
-                          textTransform: 'none',
-                          '&:hover': {
-                            backgroundColor: 'var(--color-primary-surface)',
-                          }
+              {!(user?.role === 'applicant') && (
+                <PopupState variant="popover" popupId="demo-popup-popover">
+                  {(popupState) => (
+                    <div>
+                      <div {...bindTrigger(popupState)} className="flex gap-1 items-center text-gray-600 cursor-pointer">
+                        <CorporateFareIcon />
+                        <p className="text-sm">For Corporate</p>
+                      </div>
+                      <Popover
+                        {...bindPopover(popupState)}
+                        anchorOrigin={{
+                          vertical: 'bottom',
+                          horizontal: 'left',
                         }}
-                        onClick={() => {
-                          router.push('/jobs-management');
+                        sx={{
+                          mt: 1,
+                          '& .MuiPopover-paper': {
+                            width: '100%',
+                            maxWidth: 200,
+                            overflow: 'visible',
+                            boxShadow: '0px 4px 8px 0px rgba(0,0,0,0.1)',
+                          },
                         }}
                       >
-                        <p className="text-sm">Talent Hiring</p>
-                      </Button>
-                    </Popover>
-                  </div>
-                )}
-              </PopupState>
-              <div className="border-l border-neutral-40 pl-4 max-lg:hidden">
-                <div>
-                  <PopupState variant="popover" popupId="demo-popup-popover">
-                    {(popupState) => (
-                      <div>
-                        <div {...bindTrigger(popupState)} className="cursor-pointer">
-                          <Image src="/assets/avatar.svg" alt="user" className="border border-neutral-40 rounded-full" height={28} width={28} />
-                        </div>
-                        <Popover
-                          {...bindPopover(popupState)}
-                          anchorOrigin={{
-                            vertical: 'bottom',
-                            horizontal: 'left',
-                          }}
+                        <Button
                           sx={{
-                            mt: 1,
-                            '& .MuiPopover-paper': {
-                              width: '100%',
-                              maxWidth: 200,
-                              overflow: 'visible',
-                              boxShadow: '0px 4px 8px 0px rgba(0,0,0,0.1)',
-                            },
+                            p: 2,
+                            width: '100%',
+                            textAlign: 'left',
+                            color: 'var(--color-neutral-800)',
+                            justifyContent: 'flex-start',
+                            textTransform: 'none',
+                            '&:hover': {
+                              backgroundColor: 'var(--color-primary-surface)',
+                            }
+                          }}
+                          onClick={() => {
+                            if(user) {
+                              router.push('/jobs-management');
+                            } else {
+                              router.push('/login');
+                            }
                           }}
                         >
-                          <Button
+                          {user ? (
+                            <p className="text-sm">Talent Hiring</p>
+                          ): (
+                            <p className="text-sm">Login to Open</p>
+                          )}
+                        </Button>
+                      </Popover>
+                    </div>
+                  )}
+                </PopupState>
+              )}
+              <div className="border-l border-neutral-40 pl-4 max-lg:hidden">
+                <div>
+                  {user ? (
+                    <PopupState variant="popover" popupId="demo-popup-popover">
+                      {(popupState) => (
+                        <div>
+                          <div {...bindTrigger(popupState)} className="cursor-pointer">
+                            <Image src="/assets/avatar.svg" alt="user" className="border border-neutral-40 rounded-full" height={28} width={28} />
+                          </div>
+                          <Popover
+                            {...bindPopover(popupState)}
+                            anchorOrigin={{
+                              vertical: 'bottom',
+                              horizontal: 'left',
+                            }}
                             sx={{
-                              p: 2,
-                              width: '100%',
-                              textAlign: 'left',
-                              color: 'var(--color-neutral-800)',
-                              justifyContent: 'flex-start',
-                              textTransform: 'none',
-                              '&:hover': {
-                                backgroundColor: 'var(--color-primary-surface)',
-                              }
+                              mt: 1,
+                              '& .MuiPopover-paper': {
+                                width: '100%',
+                                maxWidth: 200,
+                                overflow: 'visible',
+                                boxShadow: '0px 4px 8px 0px rgba(0,0,0,0.1)',
+                              },
                             }}
                           >
-                            <p className="text-sm">Logout</p>
-                          </Button>
-                        </Popover>
-                      </div>
-                    )}
-                  </PopupState>
+                            <div className="flex flex-col gap-2">
+                              <p className="p-4 text-sm border-b border-neutral-40">Welcome, {user?.full_name}</p>
+                              <Button
+                                sx={{
+                                  p: 2,
+                                  width: '100%',
+                                  textAlign: 'left',
+                                  color: 'var(--color-neutral-800)',
+                                  justifyContent: 'flex-start',
+                                  textTransform: 'none',
+                                  '&:hover': {
+                                    backgroundColor: 'var(--color-primary-surface)',
+                                  }
+                                }}
+                                onClick={() => {
+                                  router.push('/login');
+                                }}
+                              >
+                                <p className="text-sm">Logout</p>
+                              </Button>
+                            </div>
+                          </Popover>
+                        </div>
+                      )}
+                    </PopupState>
+                  ) : (
+                    <ButtonCustom
+                      color="var(--color-neutral-90)"
+                      bgColor="var(--color-secondary)"
+                      bgColorHover="var(--color-secondary-hover)" 
+                      optionsConfig={{
+                        onClick: () => {
+                          router.push('/login');
+                        }
+                      }}
+                    >
+                      Login
+                    </ButtonCustom>
+                  )}
                 </div>
             </div>
             </div>

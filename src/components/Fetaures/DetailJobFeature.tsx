@@ -7,6 +7,7 @@ import { useRouter } from "next/router"
 import Markdown from "react-markdown";
 import rehypeRaw from "rehype-raw";
 import remarkGfm from 'remark-gfm';
+import { getItem } from "../Helper/localstorage.helper"
 
 interface Props {
   data: any
@@ -14,6 +15,7 @@ interface Props {
 
 export default function DetailJobFeature({data}: Props) {
   const router = useRouter();
+  const user = getItem('user')
   return(
     <CardDefault className="p-6">
       <div className="flex flex-col gap-6">
@@ -42,16 +44,25 @@ export default function DetailJobFeature({data}: Props) {
               bgColorHover="var(--color-secondary-hover)" 
               optionsConfig={{
                 onClick: () => {
-                  router.push({
-                    pathname: '/form-apply',
-                    query: {
-                      id: data.id
-                    }
-                  })
+                  if(!user) {
+                    router.push({
+                      pathname: '/login',
+                      query: {
+                        redirect: `/form-apply?id=${data.id}`,
+                      }
+                    })
+                  } else {
+                    router.push({
+                      pathname: '/form-apply',
+                      query: {
+                        id: data.id
+                      }
+                    })
+                  }
                 }
               }}
             >
-              Apply
+              {user ? 'Apply' : 'Login to Apply'}
             </ButtonCustom>
           </div>
         </div>

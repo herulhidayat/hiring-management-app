@@ -2,6 +2,7 @@ import ButtonCustom from "@/components/Button/ButtonCustom";
 import FormAddJobFeature from "@/components/Fetaures/FormAddJobFeature";
 import JobListManagementFeature from "@/components/Fetaures/JobListManagementFeature";
 import JobStatisticFeature from "@/components/Fetaures/JobStatisticFeature";
+import Header from "@/components/Navbar/Header";
 import { CardDefault } from "@/components/Styled/card.styled";
 import { Close } from "@mui/icons-material";
 import { Container, Grid, Modal } from "@mui/material";
@@ -12,6 +13,10 @@ export default function JobsPage() {
   const [modalAddJob, setModalAddJob] = useState<boolean>(false);
   return (
     <>
+      <section className="sticky top-0 z-50">
+        <Header />
+      </section>
+
       <Container sx={{ mt: 5 }}>
         <Grid container spacing={2}>
           <Grid size={9}>

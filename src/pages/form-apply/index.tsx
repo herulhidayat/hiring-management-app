@@ -1,6 +1,7 @@
 import ButtonCustom from "@/components/Button/ButtonCustom";
 import FormApplyFeature from "@/components/Fetaures/FormApplyFeature";
 import ArrowLeftIcon from "@/components/Icons/ArrowLeftIcon";
+import Header from "@/components/Navbar/Header";
 import { Container, Modal, Typography } from "@mui/material";
 import { useRouter } from "next/router";
 
@@ -8,7 +9,11 @@ export default function FormApply() {
   const router = useRouter();
   return (
     <>
-      <Container sx={{mt:5}}>
+      <section className="sticky top-0 z-50">
+        <Header />
+      </section>
+
+      <Container sx={{mt:5, mb:5}}>
         <div className="border border-neutral-40 p-10 bg-neutral-10 lg:mx-40">
           <div className="flex flex-col gap-6">
             <div className="flex justify-between items-center">
