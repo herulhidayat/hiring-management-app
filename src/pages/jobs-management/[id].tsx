@@ -11,7 +11,7 @@ import {
   getCoreRowModel,
   useReactTable,
 } from '@tanstack/react-table'
-import { useParams, useSearchParams } from "next/navigation";
+import { useRouter } from "next/router";
 import { useReducer, useState } from "react";
 
 type Candidate = {
@@ -31,9 +31,10 @@ const columnHelper = createColumnHelper<Candidate>()
 function CandidateList() {
   const [data, setData] = useState<Candidate[]>(() => [])
   const rerender = useReducer(() => ({}), {})[1]
-  const paramsUrl = useParams();
-  const searchParams = useSearchParams()
+  const router = useRouter();
   const [selected, setSelected] = useState<any>([])
+  const jobId = typeof router.query.id === 'string' ? router.query.id : undefined;
+  const jobTitle = typeof router.query.title === 'string' ? router.query.title : '';
 
   const columns = [
     columnHelper.accessor('full_name', {
@@ -97,13 +98,17 @@ function CandidateList() {
   })
 
   const dataLists = useQuery({
-    queryKey: [API_PATH().applied, paramsUrl.id],
+    queryKey: [API_PATH().applied, jobId],
+    enabled: !!jobId,
     queryFn: async () => {
+      if (!jobId) {
+        return [];
+      }
       const response = await api.get(
         `${API_PATH().applied}`,
         {
           params: {
-            job_id: `eq.${paramsUrl.id}`
+            job_id: `eq.${jobId}`
           }
         }
       );
@@ -132,7 +137,7 @@ function CandidateList() {
 
       <Container sx={{ mt: 5 }} className="font-sans">
         <div className="h-full flex flex-col gap-6">
-          <h2 className="text-lg font-bold">{searchParams.get('title')}</h2>
+          <h2 className="text-lg font-bold">{jobTitle}</h2>
           {dataLists.isLoading && <div>Loading...</div>}
           {!dataLists.isLoading && (dataLists.isError || data.length === 0) &&
             <div className="h-full justify-center items-center">
