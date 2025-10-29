@@ -16,6 +16,7 @@ import { Popover } from "@mui/material";
 import CorporateFareIcon from '@mui/icons-material/CorporateFare';
 import { getItem } from "../Helper/localstorage.helper";
 import ButtonCustom from "../Button/ButtonCustom";
+import logout from "../Helper/logout.helper";
 
 interface Props {
   title?: string;
@@ -187,6 +188,7 @@ function Header({ title }: Props) {
                                 }}
                                 onClick={() => {
                                   router.push('/login');
+                                  logout();
                                 }}
                               >
                                 <p className="text-sm">Logout</p>

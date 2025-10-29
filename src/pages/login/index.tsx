@@ -67,8 +67,9 @@ function LoginPage() {
           }
         )
 
-        const expirationDate = new Date(auth.data?.expires_at);
+        const expirationDate = new Date(Date.now() + 24 * 60 * 60 * 1000);
         Cookies.set("authToken", auth.data?.access_token, { expires: expirationDate });
+        Cookies.set("role", profiles.data[0].role, { expires: expirationDate });
 
         setItem('token', auth.data?.access_token)
         setItem('user', profiles.data[0])
@@ -101,6 +102,12 @@ function LoginPage() {
     } 
     if(getItem('user')) {
       deleteItem('user')
+    }
+    if(Cookies.get('authToken')) {
+      Cookies.remove('authToken')
+    }
+    if(Cookies.get('role')) {
+      Cookies.remove('role')
     }
   }, [])
   return (

@@ -5,5 +5,5 @@ export default function logout() {
     deleteItem("token");
     deleteItem("user");
     Cookies.remove("authToken");
-    window.location.href = "/login";
+    Cookies.remove("role");
 }
