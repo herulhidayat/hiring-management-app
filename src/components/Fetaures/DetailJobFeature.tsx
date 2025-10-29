@@ -8,6 +8,8 @@ import Markdown from "react-markdown";
 import rehypeRaw from "rehype-raw";
 import remarkGfm from 'remark-gfm';
 import { getItem } from "../Helper/localstorage.helper"
+import { Skeleton } from "@mui/material"
+import { size } from "lodash"
 
 interface Props {
   data: any
@@ -22,18 +24,34 @@ export default function DetailJobFeature({data}: Props) {
         <div className="flex justify-between">
           <div className="flex gap-6">
             <div>
-              <Image src="/assets/logo-default.png" width={48} height={48} alt="logo-company" />
+              {Boolean(size(data)) ? (
+                <Image src="/assets/logo-default.png" width={48} height={48} alt="logo-company" />
+              ) : (
+                <Skeleton variant="rounded" width={48} height={48} />
+              )}
             </div>
             <div className="flex flex-col gap-2">
               <div className="w-fit">
-                <BadgeDefault color={'success'} className="capitalize">{data.job_type}</BadgeDefault>
+                {Boolean(size(data)) ? (
+                  <BadgeDefault color={'success'} className="capitalize">{data.job_type}</BadgeDefault>
+                ) : (
+                  <Skeleton variant="rounded" width={60} height={24} />
+                )}
               </div>
               <div className="flex flex-col gap-0">
-                <h1 className="text-lg/relaxed font-bold text-neutral-90">{data.title}</h1>
-                <div className="flex gap-1 items-center">
-                  <p className="text-base/relaxed text-neutral-70">{data.company}</p>
-                  <div className="text-primary"><BadgeCheckIcon /></div>
-                </div>
+                {Boolean(size(data)) ? (
+                  <h1 className="text-lg/relaxed font-bold text-neutral-90">{data.title}</h1>
+                ) : (
+                  <Skeleton variant="rounded" width={200} height={24} />
+                )}
+                {Boolean(size(data)) ? (
+                  <div className="flex gap-1 items-center">
+                    <p className="text-base/relaxed text-neutral-70">{data.company}</p>
+                    <div className="text-primary"><BadgeCheckIcon /></div>
+                  </div>
+                ) : (
+                  <Skeleton variant="rounded" className="mt-1" width={100} height={18} />
+                )}
               </div>
             </div>
           </div>
@@ -68,9 +86,18 @@ export default function DetailJobFeature({data}: Props) {
         </div>
         <div className="border-b border-neutral-40"></div>
         <div className="text-sm">
-          <Markdown remarkPlugins={[remarkGfm]} rehypePlugins={[rehypeRaw]}>
-            {data.job_description}
-          </Markdown>
+          {Boolean(size(data)) ? (
+            <Markdown remarkPlugins={[remarkGfm]} rehypePlugins={[rehypeRaw]}>
+              {data.job_description}
+            </Markdown>
+          ) : (
+            <div className="flex flex-col gap-2">
+              <Skeleton variant="rounded" width={"100%"} height={24} />
+              <Skeleton variant="rounded" width={"100%"} height={24} />
+              <Skeleton variant="rounded" width={"100%"} height={24} />
+              <Skeleton variant="rounded" width={"50%"} height={24} />
+            </div>
+          )}
         </div>
       </div>
     </CardDefault>

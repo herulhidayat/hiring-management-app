@@ -10,6 +10,8 @@ import ShareIcon from "../Icons/ShareIcon";
 import { useQuery } from "@tanstack/react-query";
 import api from "@/services/api.service";
 import { API_PATH } from "@/services/_path.service";
+import { Skeleton } from "@mui/material";
+import NoDataMessage from "../Message/NoDataMessage";
 
 interface Props {
   callbackSelected: (value: any) => void;
@@ -41,7 +43,17 @@ export default function JobListFeature({ callbackSelected }: Props) {
   return (
     <div className="flex flex-col gap-4" style={{ height: 'calc(100vh - 8.5rem)' }}>
       <div className="flex flex-col gap-4 pr-4 overflow-y-scroll">
-        {dataLists.data?.map((item: any, index: number) => (
+        {dataLists.isLoading && (
+          <div className="flex flex-col gap-6">
+            {Array.from({ length: 5 }).map((_, index) => (
+              <Skeleton variant="rounded" height={"10rem"} />
+            ))}
+          </div>
+        )}
+        {(dataLists.isError) && (
+          <NoDataMessage type="job" />
+        )}
+        {(!dataLists.isLoading && !dataLists.isError) && dataLists.data?.map((item: any, index: number) => (
           <CardItem key={index} className={`px-4 py-3 cursor-pointer ${selected?.id === item.id ? 'focus' : ''}`} onClick={() => handleSelected(item)} onMouseEnter={() => setOnHover(item)} onMouseLeave={() => setOnHover(null)}>
             <div className="flex flex-col gap-2">
               <div className="flex justify-between items-start relative">

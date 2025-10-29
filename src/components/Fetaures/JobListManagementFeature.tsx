@@ -5,6 +5,8 @@ import { QueryClient, QueryClientProvider, useQuery } from "@tanstack/react-quer
 import api from "@/services/api.service";
 import { API_PATH } from "@/services/_path.service";
 import { useRouter } from "next/router";
+import { Skeleton } from "@mui/material";
+import NoDataMessage from "../Message/NoDataMessage";
 
 interface Props {
   trigger: any
@@ -27,7 +29,17 @@ function JobListManagement({ trigger }: Props) {
   return (
     <div className="flex flex-col gap-4" style={{ height: 'calc(100vh - 8.5rem)' }}>
       <div className="flex flex-col gap-4 pr-2 overflow-y-auto">
-        {dataLists.data?.map((item: any, index: number) => (
+        {dataLists.isLoading && (
+          <div className="flex flex-col gap-6">
+            {Array.from({ length: 5 }).map((_, index) => (
+              <Skeleton variant="rounded" height={"13rem"} />
+            ))}
+          </div>
+        )}
+        {(dataLists.isError) && (
+          <NoDataMessage type="job_management" />
+        )}
+        {(!dataLists.isLoading && !dataLists.isError) && dataLists.data?.map((item: any, index: number) => (
           <div key={index} className={`p-2`}>
             <div className="flex flex-col gap-3 p-6 cursor-pointer rounded-2xl shadow-[0px_4px_8px_rgba(0,0,0,0.1)]">
               <div className="flex gap-2 items-start">
