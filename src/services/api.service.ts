@@ -1,3 +1,4 @@
+import { getItem } from "@/components/Helper/localstorage.helper";
 import axios from "axios";
 
 // Base URL API
@@ -12,6 +13,13 @@ const api = axios.create({
 // Tambahkan Interceptor untuk Request
 api.interceptors.request.use(
   (config) => {
+    const token = getItem("token");
+
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+      config.headers.Prefer = "return=minimal";
+    }
+    
     if (!(config.data instanceof FormData)) {
       config.headers['Content-Type'] = 'application/json';
     } else {

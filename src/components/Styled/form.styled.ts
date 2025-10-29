@@ -83,3 +83,11 @@ export const FormControlTextArea = styled.textarea`
         border: 1px solid var(--color-warning);
     }
 `
+
+export const FormErrorLabel = styled.label`
+    font-size: 0.75rem;
+    font-weight: 400;
+    letter-spacing: 0;
+    line-height: 1.25rem;
+    color: var(--color-danger);
+`

@@ -39,11 +39,6 @@ export default function SelectStatic({
           />
         )}
       />
-      {get(errors, fieldName) && (
-        <div className="invalid-feedback d-block">
-          {get(errors, fieldName)?.message}
-        </div>
-      )}
     </>
   );
 }

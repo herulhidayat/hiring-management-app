@@ -1,5 +1,5 @@
 import { FormControlLabel, Modal, Radio, RadioGroup } from "@mui/material";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { CardDefault } from "../Styled/card.styled";
 import CameraCapture from "../Form/CameraCapure";
 import * as yup from "yup"
@@ -9,28 +9,33 @@ import Image from "next/image";
 import ButtonCustom from "../Button/ButtonCustom";
 import UploadIcon from "../Icons/UploadIcon";
 import { Close } from "@mui/icons-material";
-import { FormControl, FormLabel } from "../Styled/form.styled";
+import { FormControl, FormErrorLabel, FormLabel } from "../Styled/form.styled";
 import AntDateTimePicker from "../Form/AntDateTimePicker";
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import DateIcon from "../Icons/DateIcon";
 import SelectStatic from "../Form/SelectStaticV2";
 import SelectCountryCode from "../Form/SelectCountryCode";
 import CheckCircleIcon from "../Icons/CheckCircleIcon";
+import { useSearchParams } from "next/navigation";
+import { QueryClient, QueryClientProvider, useMutation, useQuery } from "@tanstack/react-query";
+import api from "@/services/api.service";
+import { API_PATH } from "@/services/_path.service";
+import { useRouter } from "next/router";
+import SuccessMessage from "./SuccessMessage";
 
-export default function FormApplyFeature() {
+interface Props {
+  callbackSuccess: (value: any) => void
+}
+function FormApply({ callbackSuccess }: Props) {
+  const searchParams = useSearchParams()
   const [modalPicture, setModalPicture] = useState<boolean>(false);
   const [countrySelected, setCountrySelected] = useState<any>({})
   const [phoneNumber, setPhoneNumber] = useState<any>("")
-  const scheme = yup.object().shape({
-    full_name: yup.string().required('Full name is required'),
-    photo_profile: yup.string().required('Photo profile is required'),
-    gender: yup.string().required('Gender is required'),
-    domicile: yup.string().required('Domicile is required'),
-    email: yup.string().email().required('Email is required'),
-    phone_number: yup.string().required('Phone number is required'),
-    linkedin_link: yup.string().url().required('Linkedin link is required'),
-    date_of_birth: yup.string().required('Date of birth is required'),
-  })
+  const [scheme, setScheme] = useState<any>(yup.object()) 
+  const [applicationForm, setApplicationForm] = useState<any>([])
+  const router = useRouter();
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [errorMessage, setErrorMessage] = useState('');
 
   const {
     control,
@@ -46,13 +51,63 @@ export default function FormApplyFeature() {
     resolver: yupResolver(scheme)
   });
 
+  const getData = useQuery({
+      queryKey: [searchParams.get('id')],
+      queryFn: async () => {
+        if(!searchParams.get('id')) {
+          return
+        }
+
+        const response = await api.get(
+          `${API_PATH().job}`,
+          {
+            params: {
+              id: `eq.${searchParams.get('id')}`
+            }
+          }
+        );
+
+        if(response.data?.[0]?.application_form?.length > 0) {
+          let dataScheme: any = {}
+
+          response.data?.[0]?.application_form?.map((item: any) => {
+            dataScheme[item.field] = yup.string().required(`${item.label} is required`)
+          })
+
+          setScheme(yup.object().shape(dataScheme))
+          setApplicationForm(response.data?.[0]?.application_form)
+        }
+        return response.data;
+      },
+    });
+
+  const mutation = useMutation({
+    mutationFn: async (params: { email: string; password: string }) => {
+      setIsLoading(true);
+      const auth = await api.post(`${API_PATH().applied}`, 
+        params
+      );
+
+      return auth.data;
+    },
+    onSuccess: (data: any) => {
+      setIsLoading(false);
+      callbackSuccess(true);
+    },
+    onError: (error: any) => {
+      setErrorMessage(error.response.data.msg);
+      setIsLoading(false);
+    }
+  });
+
   const handleSubmitForm = (data: any) => {
     const form = {
       ...data,
+      job_id: searchParams.get('id'),
       phone_number: `${countrySelected.dial_code} ${data.phone_number}`,
     }
 
-    console.log(form)
+    mutation.mutate(form)
   }
 
   const handlePhoneNumber = (value: any) => {
@@ -61,8 +116,16 @@ export default function FormApplyFeature() {
     setValue('phone_number', value)
   }
 
-  return(
-    <>
+  const checkRequired = (field: string, applicationForm: any) => {
+    if(applicationForm?.find((item: any) => item.field == field)?.status_required == 'mandatory') {
+      return true
+    } else {
+      return false
+    }
+  }
+
+  const renderForm = useMemo(() => {
+    return(
       <form onSubmit={handleSubmit(handleSubmitForm)}>
         <div className="flex flex-col gap-4">
           <p className="text-xs text-danger font-bold">*Required</p>
@@ -85,37 +148,43 @@ export default function FormApplyFeature() {
                   border: '1px solid var(--color-neutral-40)',
                 }}
               >
-                <UploadIcon /> <span>Take a Picture</span>
+                <UploadIcon /> <span>Take a Picture{checkRequired('photo_profile', applicationForm) && <span className="text-danger">*</span>}</span>
               </ButtonCustom>
             </div>
+            {errors.photo_profile && <FormErrorLabel>{errors.photo_profile.message as string}</FormErrorLabel>}
           </div>
           <div className="flex flex-col gap-2">
-            <FormLabel>Full Name<span className="text-danger">*</span></FormLabel>
+            <FormLabel>Full Name{checkRequired('full_name', applicationForm) && <span className="text-danger">*</span>}</FormLabel>
             <FormControl 
               {...register("full_name")}
+              className={errors.full_name ? 'error' : ''}
               placeholder="Full Name"
             />
+            {errors.full_name && <FormErrorLabel>{errors.full_name.message as string}</FormErrorLabel>}
           </div>
-          <AntDateTimePicker
-            isLabel={true}
-            labelName={<>Date of Birth<span className="text-danger">*</span></>}
-            placeholder={'Select date'}
-            showTime={false}
-            style={{ 
-              borderRadius: '0.5rem',
-              width: '100%',
-              padding: '0.71rem 1rem',
-            }}
-            callbackOnChange={(value: any) => {
-              setValue('date_of_birth', value)
-            }}
-            suffixIcon={<ExpandMoreIcon />}
-            prefix={
-              <div className="me-2"><DateIcon /></div>
-            }
-          />
+          <div className="flex flex-col gap-0">
+            <AntDateTimePicker
+              isLabel={true}
+              labelName={<>Date of Birth{checkRequired('date_of_birth', applicationForm) && <span className="text-danger">*</span>}</>}
+              placeholder={'Select date'}
+              showTime={false}
+              style={{ 
+                borderRadius: '0.5rem',
+                width: '100%',
+                padding: '0.71rem 1rem',
+              }}
+              callbackOnChange={(value: any) => {
+                setValue('date_of_birth', value)
+              }}
+              suffixIcon={<ExpandMoreIcon />}
+              prefix={
+                <div className="me-2"><DateIcon /></div>
+              }
+            />
+            {errors.date_of_birth && <FormErrorLabel>{errors.date_of_birth.message as string}</FormErrorLabel>}
+          </div>
           <div className="flex flex-col gap-2">
-            <FormLabel>{'Pronoun (gender)'}<span className="text-danger">*</span></FormLabel>
+            <FormLabel>{'Pronoun (gender)'}{checkRequired('gender', applicationForm) && <span className="text-danger">*</span>}</FormLabel>
             <RadioGroup
               row
               aria-labelledby="demo-row-radio-buttons-group-label"
@@ -124,28 +193,38 @@ export default function FormApplyFeature() {
               <FormControlLabel sx={{ color: 'var(--color-neutral-90)', fontWeight: 400, fontSize: '0.875rem' }} value="female" control={<Radio sx={{ color: 'var(--color-primary)', '&.Mui-checked': { color: 'var(--color-primary)' }}} {...register("gender")} />} label="She/Her (Female)" />
               <FormControlLabel sx={{ color: 'var(--color-neutral-90)', fontWeight: 400, fontSize: '0.875rem' }} value="male" control={<Radio sx={{ color: 'var(--color-primary)', '&.Mui-checked': { color: 'var(--color-primary)' }}} {...register("gender")} />} label="He/Him (Male)" />
             </RadioGroup>
+            {errors.gender && <FormErrorLabel>{errors.gender.message as string}</FormErrorLabel>}
           </div>
           <div className="flex flex-col gap-2">
-            <FormLabel>Domicile<span className="text-danger">*</span></FormLabel>
+            <FormLabel>Domicile{checkRequired('domicile', applicationForm) && <span className="text-danger">*</span>}</FormLabel>
             <SelectStatic
               placeholder="Select your domicile"
               options={[
                 {
-                  label: 'Indonesia',
-                  value: 'Indonesia'
+                  label: 'Jakarta, Indonesia',
+                  value: 'Jakarta, Indonesia'
                 },
                 {
-                  label: 'Malaysia',
-                  value: 'Malaysia'
+                  label: 'Bandung, Indonesia',
+                  value: 'Bandung, Indonesia'
+                },
+                {
+                  label: 'Surabaya, Indonesia',
+                  value: 'Surabaya, Indonesia'
+                },
+                {
+                  label: 'Yogyakarta, Indonesia',
+                  value: 'Yogyakarta, Indonesia'
                 }
               ]} 
               control={control} 
               errors={errors} 
               fieldName={"domicile"}
               />
+            {errors.domicile && <FormErrorLabel>{errors.domicile.message as string}</FormErrorLabel>}
           </div>
           <div className="flex flex-col gap-2">
-            <FormLabel>Phone Number<span className="text-danger">*</span></FormLabel>
+            <FormLabel>Phone Number{checkRequired('phone_number', applicationForm) && <span className="text-danger">*</span>}</FormLabel>
             <div className="relative">
               <div className="absolute top-1/2 left-3 -translate-y-1/2 flex gap-2 items-center">
                 <div className="border-e border-neutral-40 pe-2">
@@ -153,22 +232,26 @@ export default function FormApplyFeature() {
                 </div>
                 <p className="text-sm">{countrySelected?.dial_code}</p>
               </div>
-              <FormControl style={{paddingLeft: countrySelected?.dial_code?.length > 4 ? '7.5rem' : countrySelected?.dial_code?.length > 3 ? '7rem' : '6.5rem'}} placeholder="81XXXXXXXXX" value={phoneNumber} onChange={(e: any) => handlePhoneNumber(e.target.value)}/>
+              <FormControl className={errors.phone_number ? 'error' : ''} style={{paddingLeft: countrySelected?.dial_code?.length > 4 ? '7.5rem' : countrySelected?.dial_code?.length > 3 ? '7rem' : '6.5rem'}} placeholder="81XXXXXXXXX" value={phoneNumber} onChange={(e: any) => handlePhoneNumber(e.target.value)}/>
             </div>
+            {errors.phone_number && <FormErrorLabel>{errors.phone_number.message as string}</FormErrorLabel>}
           </div>
           <div className="flex flex-col gap-2">
-            <FormLabel>Email<span className="text-danger">*</span></FormLabel>
+            <FormLabel>Email{checkRequired('email', applicationForm) && <span className="text-danger">*</span>}</FormLabel>
             <FormControl 
               {...register("email")}
               type="email"
+              className={errors.email ? 'error' : ''}
               placeholder="Enter your email address"
             />
+            {errors.email && <FormErrorLabel>{errors.email.message as string}</FormErrorLabel>}
           </div>
           <div className="flex flex-col gap-2">
-            <FormLabel>LinkedIn Link<span className="text-danger">*</span></FormLabel>
+            <FormLabel>LinkedIn Link{checkRequired('linkedin_link', applicationForm) && <span className="text-danger">*</span>}</FormLabel>
             <FormControl 
               {...register("linkedin_link",)}
               type="url"
+              className={errors.linkedin_link ? 'error' : ''}
               placeholder="https://linkedin.com/in/username"
             />
             { watch('linkedin_link') && (
@@ -177,6 +260,7 @@ export default function FormApplyFeature() {
                 <p className="text-xs">URL Address found</p>
               </div>
             )}
+            {errors.linkedin_link && <FormErrorLabel>{errors.linkedin_link.message as string}</FormErrorLabel>}
           </div>
           <div className="mt-4 flex flex-col gap-2">
             <ButtonCustom
@@ -190,6 +274,12 @@ export default function FormApplyFeature() {
           </div>
         </div> 
       </form>
+    )
+  }, [control, errors, phoneNumber, watch, countrySelected, applicationForm, watch('photo_profile')]);
+
+  return(
+    <>
+      {renderForm}
 
       <Modal
         open={modalPicture}
@@ -219,4 +309,14 @@ export default function FormApplyFeature() {
       </Modal>
     </>
   )
+}
+
+const queryClient = new QueryClient();
+
+export default function FormApplyFeature({ callbackSuccess }: Props) {
+  return (
+    <QueryClientProvider client={queryClient}>
+      <FormApply callbackSuccess={callbackSuccess} />
+    </QueryClientProvider>
+  );
 }
