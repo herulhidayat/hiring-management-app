@@ -1,3 +1,5 @@
+'use client';
+
 import Image from "next/image"
 import { CardDefault } from "../Styled/card.styled"
 import { BadgeDefault } from "../Styled/badge.styled"
@@ -56,32 +58,34 @@ export default function DetailJobFeature({data}: Props) {
             </div>
           </div>
           <div>
-            <ButtonCustom 
-              color="var(--color-neutral-90)"
-              bgColor="var(--color-secondary)"
-              bgColorHover="var(--color-secondary-hover)" 
-              optionsConfig={{
-                onClick: () => {
-                  if(!user) {
-                    router.push({
-                      pathname: '/login',
-                      query: {
-                        redirect: `/form-apply?id=${data.id}`,
-                      }
-                    })
-                  } else {
-                    router.push({
-                      pathname: '/form-apply',
-                      query: {
-                        id: data.id
-                      }
-                    })
+            {user?.role !== 'admin' && (
+              <ButtonCustom 
+                color="var(--color-neutral-90)"
+                bgColor="var(--color-secondary)"
+                bgColorHover="var(--color-secondary-hover)" 
+                optionsConfig={{
+                  onClick: () => {
+                    if(!user) {
+                      router.push({
+                        pathname: '/login',
+                        query: {
+                          redirect: `/form-apply?id=${data.id}`,
+                        }
+                      })
+                    } else {
+                      router.push({
+                        pathname: '/form-apply',
+                        query: {
+                          id: data.id
+                        }
+                      })
+                    }
                   }
-                }
-              }}
-            >
-              {user ? 'Apply' : 'Login to Apply'}
-            </ButtonCustom>
+                }}
+              >
+                {user ? 'Apply' : 'Login to Apply'}
+              </ButtonCustom>
+            )}
           </div>
         </div>
         <div className="border-b border-neutral-40"></div>
