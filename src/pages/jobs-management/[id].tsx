@@ -27,35 +27,68 @@ type Candidate = {
 
 const columnHelper = createColumnHelper<Candidate>()
 
-const columns = [
-  columnHelper.accessor('full_name', {
-    header: 'Nama Lengkap',
-  }),
-  columnHelper.accessor('email', {
-    header: 'Email',
-  }),
-  columnHelper.accessor('phone_number', {
-    header: 'No. Telepon',
-  }),
-  columnHelper.accessor('date_of_birth', {
-    header: 'Tanggal Lahir',
-  }),
-  columnHelper.accessor('domicile', {
-    header: 'Domisili',
-  }),
-  columnHelper.accessor('gender', {
-    header: 'Jenis Kelamin',
-  }),
-  columnHelper.accessor('linkedin_link', {
-    header: 'Linkedin',
-  }),
-]
 
 function CandidateList() {
   const [data, setData] = useState<Candidate[]>(() => [])
   const rerender = useReducer(() => ({}), {})[1]
   const paramsUrl = useParams();
   const searchParams = useSearchParams()
+  const [selected, setSelected] = useState<any>([])
+
+  const columns = [
+    columnHelper.accessor('full_name', {
+      header: () => <div
+        className="flex items-center gap-2"
+      >
+        <input
+          type="checkbox"
+          checked={selected.length === data.length}
+          onChange={(e) => {
+            if (e.target.checked) {
+              setSelected(data.map((item: any) => item.id))
+            } else {
+              setSelected([])
+            }
+          }} />
+        Nama Lengkap
+      </div>,
+      cell: (info) => <div
+        className="flex items-center gap-2"
+      >
+        <input
+          type="checkbox"
+          checked={selected.includes(info.row.original.id)}
+          onChange={(e) => {
+            if (e.target.checked) {
+              setSelected([...selected, info.row.original.id])
+            } else {
+              setSelected(selected.filter((item: any) => item !== info.row.original.id))
+            }
+          }
+          } />
+        {info.getValue()}
+      </div>,
+    }),
+    columnHelper.accessor('email', {
+      header: 'Email',
+    }),
+    columnHelper.accessor('phone_number', {
+      header: 'No. Telepon',
+    }),
+    columnHelper.accessor('date_of_birth', {
+      header: 'Tanggal Lahir',
+    }),
+    columnHelper.accessor('domicile', {
+      header: 'Domisili',
+    }),
+    columnHelper.accessor('gender', {
+      header: 'Jenis Kelamin',
+    }),
+    columnHelper.accessor('linkedin_link', {
+      header: 'Linkedin',
+      cell: (info) => <a href={info.getValue()} target="_blank" rel="noopener noreferrer" className="text-primary">{info.getValue()}</a>,
+    }),
+  ]
 
   const table = useReactTable({
     data,
@@ -94,14 +127,14 @@ function CandidateList() {
   return (
     <>
       <section className="sticky top-0 z-50">
-        <Header title="Candidates List"/>
+        <Header title="Candidates List" />
       </section>
 
       <Container sx={{ mt: 5 }} className="font-sans">
         <div className="h-full flex flex-col gap-6">
           <h2 className="text-lg font-bold">{searchParams.get('title')}</h2>
           {dataLists.isLoading && <div>Loading...</div>}
-          {!dataLists.isLoading && (dataLists.isError || data.length === 0) && 
+          {!dataLists.isLoading && (dataLists.isError || data.length === 0) &&
             <div className="h-full justify-center items-center">
               <NoDataMessage type="candidate" />
             </div>
