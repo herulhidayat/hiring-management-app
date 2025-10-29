@@ -35,7 +35,7 @@ function FormApply({ callbackSuccess }: Props) {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState('');
-
+  const [dateTemp, setDateTemp] = useState<any>(null);
   const {
     control,
     register,
@@ -70,7 +70,9 @@ function FormApply({ callbackSuccess }: Props) {
           let dataScheme: any = {}
 
           response.data?.[0]?.application_form?.map((item: any) => {
-            dataScheme[item.field] = yup.string().required(`${item.label} is required`)
+            if(item.status_required == 'mandatory') {
+              dataScheme[item.field] = yup.string().required(`${item.label} is required`)
+            }
           })
 
           setScheme(yup.object().shape(dataScheme))
@@ -81,13 +83,13 @@ function FormApply({ callbackSuccess }: Props) {
     });
 
   const mutation = useMutation({
-    mutationFn: async (params: { email: string; password: string }) => {
+    mutationFn: async (params: any) => {
       setIsLoading(true);
-      const auth = await api.post(`${API_PATH().applied}`, 
+      const response = await api.post(`${API_PATH().applied}`, 
         params
       );
 
-      return auth.data;
+      return response.data;
     },
     onSuccess: (data: any) => {
       setIsLoading(false);
@@ -167,6 +169,7 @@ function FormApply({ callbackSuccess }: Props) {
               labelName={<>Date of Birth{checkRequired('date_of_birth', applicationForm) && <span className="text-danger">*</span>}</>}
               placeholder={'Select date'}
               showTime={false}
+              defaultValue={dateTemp || new Date()}
               style={{ 
                 borderRadius: '0.5rem',
                 width: '100%',
@@ -174,6 +177,7 @@ function FormApply({ callbackSuccess }: Props) {
               }}
               callbackOnChange={(value: any) => {
                 setValue('date_of_birth', value)
+                setDateTemp(value)
               }}
               suffixIcon={<ExpandMoreIcon />}
               prefix={
@@ -264,7 +268,8 @@ function FormApply({ callbackSuccess }: Props) {
           <div className="mt-4 flex flex-col gap-2">
             <ButtonCustom
               optionsConfig={{
-                type: 'submit'
+                type: 'submit',
+                loading: isLoading
               }}
               styleConfig={{
                 height: '2.5rem'
@@ -274,7 +279,7 @@ function FormApply({ callbackSuccess }: Props) {
         </div> 
       </form>
     )
-  }, [control, errors, phoneNumber, watch, countrySelected, applicationForm, watch('photo_profile')]);
+  }, [control, errors, phoneNumber, watch, countrySelected, applicationForm, watch('photo_profile'), dateTemp, isLoading]);
 
   return(
     <>

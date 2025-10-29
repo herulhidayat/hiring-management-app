@@ -97,6 +97,7 @@ function AntDateTimePicker(props: AntDateTimePickerProps) {
         picker={props?.picker}
         ref={dateTimeRef}
         size="large"
+        getPopupContainer={(trigger: any) => trigger.parentElement}
         disabled={props?.disabled}
         value={props?.defaultValue !== 0 ? dayjs(props?.defaultValue) : null}
         defaultValue={props?.defaultValue ? dayjs(props?.defaultValue) : undefined}

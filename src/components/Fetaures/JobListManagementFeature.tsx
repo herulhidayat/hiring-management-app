@@ -6,11 +6,15 @@ import api from "@/services/api.service";
 import { API_PATH } from "@/services/_path.service";
 import { useRouter } from "next/router";
 
-function JobListManagement() {
+interface Props {
+  trigger: any
+}
+
+function JobListManagement({ trigger }: Props) {
   const router = useRouter();
 
   const dataLists = useQuery({
-    queryKey: ["datasets", "detail"],
+    queryKey: ["job", trigger],
     queryFn: async () => {
       const response = await api.get(
         `${API_PATH().job}?select=*`,
@@ -97,10 +101,10 @@ function JobListManagement() {
 
 const queryClient = new QueryClient();
 
-export default function JobListManagementFeature() {
+export default function JobListManagementFeature({ trigger }: Props) {
   return (
     <QueryClientProvider client={queryClient}>
-      <JobListManagement />
+      <JobListManagement trigger={trigger}/>
     </QueryClientProvider>
   )
 }

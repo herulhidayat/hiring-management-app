@@ -4,13 +4,15 @@ import JobListManagementFeature from "@/components/Fetaures/JobListManagementFea
 import JobStatisticFeature from "@/components/Fetaures/JobStatisticFeature";
 import Header from "@/components/Navbar/Header";
 import { CardDefault } from "@/components/Styled/card.styled";
-import { Close } from "@mui/icons-material";
-import { Container, Grid, Modal } from "@mui/material";
+import { CheckCircle, Close } from "@mui/icons-material";
+import { Container, Grid, Modal, Snackbar } from "@mui/material";
 import { useState } from "react";
 import styled from "styled-components";
 
 export default function JobsPage() {
   const [modalAddJob, setModalAddJob] = useState<boolean>(false);
+  const [snackbarNotify, setSnackbarNotify] = useState<boolean>(false);
+  const [trigger, setTrigger] = useState<number>(0);
   return (
     <>
       <section className="sticky top-0 z-50">
@@ -20,7 +22,7 @@ export default function JobsPage() {
       <Container sx={{ mt: 5 }} className="font-sans">
         <Grid container spacing={2}>
           <Grid size={9}>
-            <JobListManagementFeature />
+            <JobListManagementFeature trigger={trigger}/>
           </Grid>
           <Grid size={3}>
             <div className="flex flex-col gap-6">
@@ -50,29 +52,28 @@ export default function JobsPage() {
         aria-labelledby="modal-modal-title"
         aria-describedby="modal-modal-description"
       >
-        <CardDefault className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-neutral-10 w-3/4 md:w-1/2">
-          <div className="flex flex-col gap-0">
-            <div className="flex justify-between p-6 border-b border-neutral-40">
-              <div className="flex flex-col gap-0">
-                <h4 className="text-xl font-bold text-neutral-100">Job Opening</h4>
-              </div>
-              <div className="cursor-pointer" onClick={() => setModalAddJob(false)}>
-                <Close />
-              </div>
-            </div>
-            <div className="p-6 pe-4 overflow-y-auto max-h-[calc(100vh-12.5rem)] me-1">
-              <FormAddJobFeature />
-            </div>
-            <div className="flex justify-end p-6 border-t border-neutral-40">
-              <ButtonCustom optionsConfig={{
-                type: 'submit',
-              }}>
-                Publish Job
-              </ButtonCustom>
-            </div>
-          </div>
-        </CardDefault>
+        <FormAddJobFeature 
+          handleCloseModal={() => setModalAddJob(false)} 
+          callbackSuccess={() => {
+            setSnackbarNotify(true)
+            setTrigger(trigger + 1)
+          }} 
+        />
       </Modal>
+
+      <Snackbar
+        open={snackbarNotify}
+        autoHideDuration={5000}
+        onClose={() => setSnackbarNotify(false)}
+      >
+        <div className="flex justify-between gap-6 bg-neutral-10 p-4 rounded-lg border-l-4 border-primary shadow">
+          <div className="flex items-center gap-2 text-neutral-90">
+            <CheckCircle sx={{ fontSize: '1.5rem', color: 'var(--color-primary)' }} />
+            <p className="font-bold text-sm">Job vacancy successfully created</p>
+          </div>
+          <div className="cursor-pointer"><Close onClick={() => setSnackbarNotify(false)} /></div>
+        </div>
+      </Snackbar>
     </>
   )
 }
