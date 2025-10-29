@@ -1,7 +1,19 @@
 # 🚀 Pokemon Card App
 
-This project is a [Pokemon Card App] ([https://pokemon-card-app-two.vercel.app/](https://pokemon-card-app-two.vercel.app/)) web application deployed using **[Vercel](https://vercel.com/)**.
+This project is a [] ([https://hiring-management-app.vercel.app/](https://hiring-management-app.vercel.app/)) web application deployed using **[Vercel](https://vercel.com/)**.
 ---
+
+## Tech Stack
+
+- [Next.js](https://nextjs.org/)
+- [TypeScript](https://www.typescriptlang.org/)
+- [Tailwind CSS](https://tailwindcss.com/)
+- [MUI](https://mui.com/)
+- [Tensorflow JS](https://github.com/tensorflow/tfjs)
+- [React Webcam](https://github.com/mozmorris/react-webcam)
+- [React Hook Form](https://react-hook-form.com/)
+- [Yup](https://github.com/jquense/yup)
+- [React Query](https://react-query.tanstack.com/)
 
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/pages/api-reference/create-next-app).
 
