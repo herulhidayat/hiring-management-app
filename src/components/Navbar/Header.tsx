@@ -77,7 +77,9 @@ function Header() {
               </Menu>
             </Box>
             <div className="flex items-center gap-4">
-              <Image src="/assets/logo.png" alt="logo" height={50} width={145} />
+              <div className="cursor-pointer" onClick={() => router.push("/")}>
+                <Image src="/assets/logo.png" alt="logo" height={50} width={145} />
+              </div>
               <div className="border-l border-neutral-40 pl-4 font-medium text-gray-600">
                   Job List
               </div>

@@ -1,8 +1,8 @@
 export const API_PATH = () => {
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
+  
+  console.log(supabaseUrl)
     return {
-      card: {
-        getAll: "v2/pokemon",
-        getType: "v2/type",
-      },
+      job: `${supabaseUrl}/rest/v1/job`,
     }
 }

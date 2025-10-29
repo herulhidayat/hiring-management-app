@@ -7,6 +7,9 @@ import CheckCircleIcon from "../Icons/CheckCircleIcon";
 import BadgeCheckIcon from "../Icons/BadgeCheckIcon";
 import { BadgeCustom, BadgeDefault, BadgeDefaultOutline } from "../Styled/badge.styled";
 import ShareIcon from "../Icons/ShareIcon";
+import { useQuery } from "@tanstack/react-query";
+import api from "@/services/api.service";
+import { API_PATH } from "@/services/_path.service";
 
 interface Props {
   callbackSelected: (value: any) => void;
@@ -16,18 +19,29 @@ export default function JobListFeature({ callbackSelected }: Props) {
   const [selected, setSelected] = useState<any>(listJobDummy.data[0]);
   const [onHover, setOnHover] = useState<any>(null);
 
+
+  const dataLists = useQuery({
+    queryKey: ["datasets", "detail"],
+    queryFn: async () => {
+      const response = await api.get(
+        `${API_PATH().job}?select=*`,
+      );
+
+      setSelected(response.data[0]);
+      callbackSelected(response.data[0]);
+      return response.data;
+    },
+  });
+
   const handleSelected = (value: any) => {
     setSelected(value);
     callbackSelected(value);
   }
 
-  useEffect(() => {
-    callbackSelected(listJobDummy.data[0]);
-  }, [])
   return (
     <div className="flex flex-col gap-4" style={{ height: 'calc(100vh - 8.5rem)' }}>
       <div className="flex flex-col gap-4 pr-4 overflow-y-scroll">
-        {listJobDummy.data.map((item, index) => (
+        {dataLists.data?.map((item: any, index: number) => (
           <CardItem key={index} className={`px-4 py-3 cursor-pointer ${selected?.id === item.id ? 'focus' : ''}`} onClick={() => handleSelected(item)} onMouseEnter={() => setOnHover(item)} onMouseLeave={() => setOnHover(null)}>
             <div className="flex flex-col gap-2">
               <div className="flex justify-between items-start relative">
@@ -38,7 +52,7 @@ export default function JobListFeature({ callbackSelected }: Props) {
                   <div className="flex flex-col gap-0">
                     <h3 className="text-base/relaxed font-bold">{item.title}</h3>
                     <div className="flex gap-1 items-center">
-                      <p className="text-sm/relaxed">Rakamin</p>
+                      <p className="text-sm/relaxed">{item.company}</p>
                       <div className="text-primary"><BadgeCheckIcon /></div>
                     </div>
                   </div>

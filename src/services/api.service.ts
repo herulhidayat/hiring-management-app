@@ -4,6 +4,7 @@ import axios from "axios";
 const api = axios.create({
   baseURL: "/api",
   headers: {
+    "apikey": process.env.NEXT_PUBLIC_SUPABASE_PUBLIC_API_KEY,
     "Content-Type": "application/json",
   },
 });

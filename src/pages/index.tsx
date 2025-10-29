@@ -4,8 +4,12 @@ import DetailJobFeature from "@/components/Fetaures/DetailJobFeature";
 import JobListFeature from "@/components/Fetaures/JobListFeature";
 import { Container, Grid } from "@mui/material";
 import { useState } from "react";
+import {
+  QueryClient,
+  QueryClientProvider,
+} from "@tanstack/react-query";
 
-export default function Home() {
+ function HomePage() {
   const [selected, setSelected] = useState<any>({});
   return (
     <>
@@ -20,5 +24,16 @@ export default function Home() {
         </Grid>
       </Container>
     </>
+  );
+}
+
+
+const queryClient = new QueryClient();
+
+export default function Home() {
+  return (
+    <QueryClientProvider client={queryClient}>
+      <HomePage />
+    </QueryClientProvider>
   );
 }
