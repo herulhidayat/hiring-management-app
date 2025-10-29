@@ -32,7 +32,7 @@ function JobListManagement({ trigger }: Props) {
         {dataLists.isLoading && (
           <div className="flex flex-col gap-6">
             {Array.from({ length: 5 }).map((_, index) => (
-              <Skeleton variant="rounded" height={"13rem"} />
+              <Skeleton key={index} variant="rounded" height={"13rem"} />
             ))}
           </div>
         )}

@@ -46,7 +46,7 @@ export default function JobListFeature({ callbackSelected }: Props) {
         {dataLists.isLoading && (
           <div className="flex flex-col gap-6">
             {Array.from({ length: 5 }).map((_, index) => (
-              <Skeleton variant="rounded" height={"10rem"} />
+              <Skeleton key={index} variant="rounded" height={"10rem"} />
             ))}
           </div>
         )}

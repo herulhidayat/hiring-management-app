@@ -2,8 +2,8 @@ import { NextRequest, NextResponse } from 'next/server'
  
 // 1. Specify protected and public routes
 // const protectedRoutes = ['/datasets/add', '/administrator/user-management', '/administrator/role']
-const publicRoutes = ['/login', '/register']
-const hideRoutes = ['/datasets', '/datasets/:id', '/docs', '/home'] 
+const publicRoutes = ['/login', '/']
+const hideRoutes = ['/jobs-management', '/jobs-management/:id', '/form-apply'] 
  
 export default async function middleware(req: NextRequest) {
   const path = req.nextUrl.pathname
